@@ -11,29 +11,29 @@ import {
 } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 import { purple } from '@mui/material/colors';
-import carImage from '../Static/images/car.jpg';
+// import carImage from '../Static/images/car.jpg';
 import CardDetails from './CardDetails';
 import { getItems } from '../api/api';
 import GradeOutlinedIcon from '@mui/icons-material/GradeOutlined';
 
-export default function Cards() {
+export default function Cards({ items }) {
   const [drawerState, setDrawerState] = useState(false);
-  const [items, setItems] = useState([]);
+  // const [items, setItems] = useState([]);
   const [itemDetails, setItemDetails] = useState(null);
 
   const DrawerOpen = () => (event) => {
     setDrawerState(!drawerState);
   };
 
-  useEffect(() => {
-    getAllItem();
-  }, []);
+  // useEffect(() => {
+  //   getAllItem();
+  // }, []);
 
-  const getAllItem = async () => {
-    const itemData = await getItems();
-    console.log(itemData.data);
-    setItems(itemData.data);
-  };
+  // const getAllItem = async () => {
+  //   const itemData = await getItems();
+  //   console.log(itemData.data);
+  //   setItems(itemData.data);
+  // };
 
   const handleClick = (item) => {
     setItemDetails(item);

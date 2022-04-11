@@ -6,15 +6,14 @@ import {
   FormGroup,
   FormControl,
 } from '@mui/material';
-import FileBase from 'react-file-base64';
-import { DatePicker, LocalizationProvider } from '@mui/lab';
+import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import DateAdapter from '@mui/lab/AdapterMoment';
 import { makeStyles } from '@mui/styles';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { addItems } from './api/api';
-import { styled } from '@mui/material/styles';
 import Stack from '@mui/material/Stack';
 import { useHistory } from 'react-router-dom';
+import { withAuthenticationRequired, useAuth0 } from '@auth0/auth0-react';
 
 const useStyles = makeStyles({
   root: {
@@ -32,12 +31,12 @@ const initialValues = {
   imageValue: '',
   auctionDate: new Date(),
 };
-export default function AddItem() {
+
+const AddItem = () => {
   const classes = useStyles();
   const history = useHistory();
 
   const [item, setItem] = useState(initialValues);
-  // const [dateValue, setDateValue] = useState(new Date());
   const { itemName, itemCatagory, aboutItem, owner, basePrice, imageValue } =
     item;
 
@@ -66,10 +65,13 @@ export default function AddItem() {
       .then((res) => res.json())
       .then(async (data) => {
         console.log(data.url, typeof data.url);
-        const res = await addItems({ ...item, imageValue: data.url });
+        const res = await addItems({
+          ...item,
+          imageValue: data.url,
+          endDate: item.auctionDate + 1,
+        });
         setItem({ ...item, imageValue: data.url });
         history.push('/');
-        console.log(res);
       })
       .catch((err) => console.log(err));
   };
@@ -151,7 +153,7 @@ export default function AddItem() {
                   onChange={(e) => onValueChange(e)}
                 />
 
-                <DatePicker
+                <DateTimePicker
                   label='Choose when to go live'
                   inputFormat='MM/DD/YYYY'
                   value={item.auctionDate}
@@ -188,4 +190,6 @@ export default function AddItem() {
       </LocalizationProvider>
     </>
   );
-}
+};
+
+export default withAuthenticationRequired(AddItem);

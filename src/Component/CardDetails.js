@@ -9,8 +9,11 @@ import {
   Dialog,
   DialogTitle,
   TextField,
+  FormGroup,
+  FormControl,
 } from '@mui/material';
-import carImage from '../Static/images/car.jpg';
+// import carImage from '../Static/images/car.jpg';
+import { addItems, updateItems } from '../api/api';
 import { makeStyles } from '@mui/styles';
 import { purple } from '@mui/material/colors';
 import React, { useState, useEffect } from 'react';
@@ -18,12 +21,14 @@ import Divider from '@mui/material/Divider';
 import CancelIcon from '@mui/icons-material/Cancel';
 import CdTimerComp from './countdown/CdTimerComp';
 // import { itemInformation } from '../api/api';
-import { useParams } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 
 export default function CardDetails({ drawerclose, details }) {
   const item = details;
   const { isAuthenticated } = useAuth0();
+  const history = useHistory();
+  const [newPrice, setNewPrice] = useState('');
 
   const useStyles = makeStyles({
     cardImage: {
@@ -59,7 +64,16 @@ export default function CardDetails({ drawerclose, details }) {
   const handleClose = () => {
     setOpenDig(false);
   };
-  const handleSubmit = () => {};
+
+  const handlePriceChange = (e) => {
+    setNewPrice(e.target.value);
+  };
+
+  const handleSubmit = async (Item) => {
+    console.log('target value', newPrice);
+    const res = await updateItems(Item, newPrice);
+    history.push('/');
+  };
   return (
     <Container
       style={{
@@ -121,7 +135,11 @@ export default function CardDetails({ drawerclose, details }) {
           borderRadius: 15,
         }}
       >
-        <CdTimerComp targetDate={item.auctionDate} />
+        {!item.isLive ? (
+          <CdTimerComp targetDate={item.auctionDate} />
+        ) : (
+          <CdTimerComp targetDate={item.endDate} />
+        )}
         <Divider orientation='horizontal' flexItem color='white' />
         <Box
           padding={2}
@@ -140,50 +158,50 @@ export default function CardDetails({ drawerclose, details }) {
         <Button variant='outlined' color='secondary'>
           Know More
         </Button>
-        {!isAuthenticated ? (
+        {item.isLive && isAuthenticated ? (
           <Button
             variant='contained'
             color='secondary'
             onClick={handleClickOpen}
-            disabled
           >
             Bid Now
           </Button>
         ) : (
-          <Button
-            variant='contained'
-            color='secondary'
-            onClick={handleClickOpen}
-          >
+          <Button variant='contained' color='secondary' disabled>
             Bid Now
           </Button>
         )}
         <Dialog open={openDig} onClose={handleClose}>
           <DialogTitle>Enter Your Bidding Amount</DialogTitle>
           <Box>
-            <form
+            <FormGroup
               autoComplete='off'
               noValidate
               className={`${classes.root} ${classes.form}`}
-              onSubmit={handleSubmit}
             >
-              <TextField
-                id='outlined-basic'
-                label='Enter the Amount'
-                variant='outlined'
-                color='secondary'
-                className={classes.textFild}
-              />
-              <Button
-                onClick={handleClose}
-                variant='contained'
-                type='submit'
-                color='secondary'
-                fillWidth
-              >
-                Submit
-              </Button>
-            </form>
+              <FormControl>
+                <TextField
+                  id='outlined-basic'
+                  label='Enter the Amount'
+                  variant='outlined'
+                  color='secondary'
+                  className={classes.textFild}
+                  onChange={handlePriceChange}
+                />
+                <Button
+                  onClick={() => {
+                    handleSubmit(item);
+                    handleClose();
+                  }}
+                  variant='contained'
+                  type='submit'
+                  color='secondary'
+                  fillWidth
+                >
+                  Submit
+                </Button>
+              </FormControl>
+            </FormGroup>
           </Box>
         </Dialog>
       </Stack>

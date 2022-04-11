@@ -2,6 +2,8 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import cors from 'cors';
+import schedule from 'node-schedule';
+import ItemMessage from './models/itemMessage.js';
 
 import itemRoutes from './routes/items.js';
 
@@ -28,6 +30,22 @@ mongoObj.on('connected', () => {
 });
 mongoObj.on('error', () => {
   console.log('error connecting mongodb');
+});
+
+const items = await ItemMessage.find();
+console.log(items);
+items.map((item) => {
+  schedule.scheduleJob(item.auctionDate, () => {
+    console.log('updating...');
+    ItemMessage.updateOne(
+      { itemName: item.itemName },
+      { isLive: true },
+      (res, err) => {
+        if (err) console.log(err);
+        else console.log('updated', res);
+      }
+    );
+  });
 });
 
 app.listen(PORT, () => console.log(`Server Running on port : ${PORT}`));

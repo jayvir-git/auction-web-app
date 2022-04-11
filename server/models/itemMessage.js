@@ -9,6 +9,11 @@ const itemSchema = mongoose.Schema(
     auctionDate: Date,
     imageValue: String,
     basePrice: String,
+    isLive: {
+      type: Boolean,
+      default: false,
+    },
+    endDate: Date,
   },
   { timestamps: true }
 );

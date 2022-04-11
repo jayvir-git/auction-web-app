@@ -9,7 +9,7 @@ import { LocalizationProvider } from '@mui/lab';
 import DateAdapter from '@mui/lab/AdapterMoment';
 import { makeStyles } from '@mui/styles';
 import { useAuth0 } from '@auth0/auth0-react';
-import { sizing } from '@mui/system';
+// import PrivateRoute from './Component/PrivateRoute';
 
 export default function App() {
   const useStyles = makeStyles({});
@@ -41,34 +41,36 @@ export default function App() {
                   >
                     Online Auction
                   </Typography>
-                  {isAuthenticated ? (
-                    <Button
-                      variant='outlined'
-                      className={classes.btn}
-                      color='secondary'
-                      onClick={logout}
-                    >
-                      Logout
-                    </Button>
-                  ) : (
-                    <Stack direction='row' spacing={2} marginRight={2}>
-                      <Button
-                        variant='contained'
-                        className={classes.btn}
-                        color='secondary'
-                        onClick={loginWithPopup}
-                      >
-                        Login
-                      </Button>
+                  <Stack direction='row' spacing={2} marginRight={2}>
+                    {isAuthenticated ? (
                       <Button
                         variant='outlined'
                         className={classes.btn}
                         color='secondary'
+                        onClick={logout}
                       >
-                        Sign up
+                        Logout
                       </Button>
-                    </Stack>
-                  )}
+                    ) : (
+                      <>
+                        <Button
+                          variant='contained'
+                          className={classes.btn}
+                          color='secondary'
+                          onClick={loginWithPopup}
+                        >
+                          Login
+                        </Button>
+                        <Button
+                          variant='outlined'
+                          className={classes.btn}
+                          color='secondary'
+                        >
+                          Sign up
+                        </Button>
+                      </>
+                    )}
+                  </Stack>
                 </Box>
                 <Switch>
                   <Route exact path='/'>

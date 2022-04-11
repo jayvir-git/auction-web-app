@@ -9,6 +9,7 @@ export const getItems = async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 };
+
 export const addItem = async (req, res) => {
   const item = req.body;
 
@@ -21,4 +22,17 @@ export const addItem = async (req, res) => {
     console.log(error);
     res.status(409).json({ message: error.message });
   }
+};
+
+export const updateItems = async (req, res) => {
+  const { item, newPrice } = req.body;
+  console.log('update request', req.body);
+  ItemMessage.updateOne(
+    { itemName: item.itemName },
+    { basePrice: newPrice },
+    (res, err) => {
+      if (err) console.log(err);
+      else console.log('updated', res);
+    }
+  );
 };
