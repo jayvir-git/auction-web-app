@@ -9,7 +9,6 @@ import { LocalizationProvider } from '@mui/lab';
 import DateAdapter from '@mui/lab/AdapterMoment';
 import { makeStyles } from '@mui/styles';
 import { useAuth0 } from '@auth0/auth0-react';
-// import PrivateRoute from './Component/PrivateRoute';
 
 export default function App() {
   const useStyles = makeStyles({});
