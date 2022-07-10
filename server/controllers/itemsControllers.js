@@ -1,4 +1,5 @@
 import ItemMessage from '../models/itemMessage.js';
+import User from '../models/user.js';
 
 export const getItems = async (req, res) => {
   try {
@@ -25,14 +26,40 @@ export const addItem = async (req, res) => {
 };
 
 export const updateItems = async (req, res) => {
-  const { item, newPrice } = req.body;
+  const { item, newPrice, bidderId } = req.body;
   console.log('update request', req.body);
   ItemMessage.updateOne(
     { itemName: item.itemName },
-    { basePrice: newPrice },
+    { basePrice: newPrice, bidderId: bidderId },
     (res, err) => {
       if (err) console.log(err);
-      else console.log('updated', res);
+      // else {
+      res.json(res);
+      console.log('updated', res);
+      // }
     }
   );
+};
+
+export const addUser = async (req, res) => {
+  const user = req.body;
+  const newUser = User(user);
+  try {
+    await newUser.save();
+    res.status(201).json(newUser);
+  } catch (error) {
+    console.log('error while saving user', error);
+    res.status(409).json({ message: error.message });
+  }
+};
+
+export const bkmItem = async (req, res) => {
+  const { id, userId } = req.body;
+  ItemMessage.updateOne({ _id: id }, { $push: { bkm: userId } }, (res, err) => {
+    if (err) console.log(err);
+    else {
+      res.status(201).json(res);
+      console.log('item bookmarked', res);
+    }
+  });
 };

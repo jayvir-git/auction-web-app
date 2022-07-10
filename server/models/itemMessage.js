@@ -14,6 +14,9 @@ const itemSchema = mongoose.Schema(
       default: false,
     },
     endDate: Date,
+    ownerId: String,
+    bidderId: String,
+    bkm: [String],
   },
   { timestamps: true }
 );

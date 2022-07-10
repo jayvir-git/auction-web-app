@@ -26,9 +26,10 @@ import { useAuth0 } from '@auth0/auth0-react';
 
 export default function CardDetails({ drawerclose, details }) {
   const item = details;
-  const { isAuthenticated } = useAuth0();
+  const { isAuthenticated, user } = useAuth0();
   const history = useHistory();
   const [newPrice, setNewPrice] = useState('');
+  const [upd, setUpd] = useState(false);
 
   const useStyles = makeStyles({
     cardImage: {
@@ -69,10 +70,11 @@ export default function CardDetails({ drawerclose, details }) {
     setNewPrice(e.target.value);
   };
 
-  const handleSubmit = async (Item) => {
+  const handleSubmit = (Item) => {
     console.log('target value', newPrice);
-    const res = await updateItems(Item, newPrice);
-    history.push('/');
+    updateItems(Item, newPrice, user.sub)
+      .then((res) => setUpd(true))
+      .catch((err) => console.log(err));
   };
   return (
     <Container
@@ -151,7 +153,7 @@ export default function CardDetails({ drawerclose, details }) {
           }}
         >
           <Typography marginBottom={2}>Curent Bid</Typography>
-          <Typography>5000 Rs.</Typography>
+          <Typography>{item.basePrice}</Typography>
         </Box>
       </Box>
       <Stack spacing={4} direction='row' marginTop={4}>
@@ -180,26 +182,34 @@ export default function CardDetails({ drawerclose, details }) {
               className={`${classes.root} ${classes.form}`}
             >
               <FormControl>
-                <TextField
-                  id='outlined-basic'
-                  label='Enter the Amount'
-                  variant='outlined'
-                  color='secondary'
-                  className={classes.textFild}
-                  onChange={handlePriceChange}
-                />
-                <Button
-                  onClick={() => {
-                    handleSubmit(item);
-                    handleClose();
-                  }}
-                  variant='contained'
-                  type='submit'
-                  color='secondary'
-                  fillWidth
-                >
-                  Submit
-                </Button>
+                <Stack spacing={2}>
+                  <TextField
+                    error={parseInt(newPrice) < parseInt(item.basePrice)}
+                    id='outlined-basic'
+                    label='Enter the Amount'
+                    variant='outlined'
+                    color='secondary'
+                    className={classes.textFild}
+                    onChange={handlePriceChange}
+                    helperText={
+                      parseInt(newPrice) < parseInt(item.basePrice)
+                        ? 'Bid amount too small'
+                        : '...'
+                    }
+                  />
+                  <Button
+                    onClick={() => {
+                      handleSubmit(item);
+                      handleClose();
+                    }}
+                    variant='contained'
+                    type='submit'
+                    color='secondary'
+                    fillWidth
+                  >
+                    Submit
+                  </Button>
+                </Stack>
               </FormControl>
             </FormGroup>
           </Box>

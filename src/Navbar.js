@@ -9,6 +9,8 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import PersonIcon from '@mui/icons-material/Person';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { useHistory, useLocation } from 'react-router-dom';
+import { useAuth0 } from '@auth0/auth0-react';
+import { Avatar } from '@mui/material';
 
 const useStyles = makeStyles({
   navbar: {
@@ -29,6 +31,20 @@ export default function Navbar() {
   const classes = useStyles();
   const history = useHistory();
   const location = useLocation();
+  const { user } = useAuth0();
+  const checkAvatar = () => {
+    if (user) {
+      return (
+        <Avatar
+          component='span'
+          src={user.picture}
+          style={{ marginLeft: '5px' }}
+        />
+      );
+    } else {
+      return <PersonIcon color='secondary' sx={{ fontSize: 50 }} />;
+    }
+  };
 
   const menuItems = [
     {
@@ -43,7 +59,7 @@ export default function Navbar() {
     },
     {
       text: 'profile',
-      icon: <PersonIcon color='secondary' sx={{ fontSize: 50 }} />,
+      icon: checkAvatar(),
       path: '/profile',
     },
   ];

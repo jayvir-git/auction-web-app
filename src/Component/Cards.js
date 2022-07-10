@@ -9,35 +9,36 @@ import {
   Grid,
   Container,
 } from '@mui/material';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { purple } from '@mui/material/colors';
-// import carImage from '../Static/images/car.jpg';
 import CardDetails from './CardDetails';
-import { getItems } from '../api/api';
+import { bkmItem } from '../api/api';
 import GradeOutlinedIcon from '@mui/icons-material/GradeOutlined';
+import GradeIcon from '@mui/icons-material/Grade';
+import { useAuth0 } from '@auth0/auth0-react';
+import { useHistory } from 'react-router-dom';
 
 export default function Cards({ items }) {
   const [drawerState, setDrawerState] = useState(false);
-  // const [items, setItems] = useState([]);
   const [itemDetails, setItemDetails] = useState(null);
+  const [up, setUp] = useState(false);
+  const { user, loginWithRedirect } = useAuth0();
+  const history = useHistory();
 
   const DrawerOpen = () => (event) => {
     setDrawerState(!drawerState);
   };
 
-  // useEffect(() => {
-  //   getAllItem();
-  // }, []);
-
-  // const getAllItem = async () => {
-  //   const itemData = await getItems();
-  //   console.log(itemData.data);
-  //   setItems(itemData.data);
-  // };
-
   const handleClick = (item) => {
     setItemDetails(item);
     setDrawerState(true);
+  };
+
+  const bookmark = (id) => {
+    console.log('bookmark method called with ', id);
+    bkmItem(id, user.sub)
+      .then((res) => setUp(true))
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -45,7 +46,7 @@ export default function Cards({ items }) {
       <Container maxWidth='lg'>
         <Grid container spacing={1}>
           {items.map((item) => (
-            <Grid item md={4} sm={6} xs={12}>
+            <Grid item md={4} sm={6} xs={12} key={item.itemName}>
               <Card sx={{ maxWidth: 345 }}>
                 <CardMedia
                   component='img'
@@ -62,7 +63,18 @@ export default function Cards({ items }) {
                   }
                   action={
                     <IconButton aria-label='settings'>
-                      <GradeOutlinedIcon />
+                      {user && item.bkm.includes(user.sub) ? (
+                        <GradeIcon />
+                      ) : (
+                        <GradeOutlinedIcon
+                          onClick={() => {
+                            console.log('bookmark clicked', item);
+                            if (user) {
+                              bookmark(item._id);
+                            } else loginWithRedirect();
+                          }}
+                        />
+                      )}
                     </IconButton>
                   }
                   title={item.itemName}

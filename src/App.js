@@ -13,7 +13,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 export default function App() {
   const useStyles = makeStyles({});
   const classes = useStyles();
-  const { loginWithPopup, isAuthenticated, logout } = useAuth0();
+  const { loginWithRedirect, isAuthenticated, logout } = useAuth0();
 
   return (
     <LocalizationProvider dateAdapter={DateAdapter}>
@@ -38,7 +38,7 @@ export default function App() {
                     color='secondary'
                     style={{ fontWeight: 600, fontSize: 40 }}
                   >
-                    Online Auction
+                    Auction Web App
                   </Typography>
                   <Stack direction='row' spacing={2} marginRight={2}>
                     {isAuthenticated ? (
@@ -56,7 +56,7 @@ export default function App() {
                           variant='contained'
                           className={classes.btn}
                           color='secondary'
-                          onClick={loginWithPopup}
+                          onClick={loginWithRedirect}
                         >
                           Login
                         </Button>

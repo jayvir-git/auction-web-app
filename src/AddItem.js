@@ -35,6 +35,7 @@ const initialValues = {
 const AddItem = () => {
   const classes = useStyles();
   const history = useHistory();
+  const { user } = useAuth0();
 
   const [item, setItem] = useState(initialValues);
   const { itemName, itemCatagory, aboutItem, owner, basePrice, imageValue } =
@@ -69,6 +70,7 @@ const AddItem = () => {
           ...item,
           imageValue: data.url,
           endDate: item.auctionDate + 1,
+          ownerId: user.sub,
         });
         setItem({ ...item, imageValue: data.url });
         history.push('/');
